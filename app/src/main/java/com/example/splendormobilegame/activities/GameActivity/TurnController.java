@@ -1,9 +1,11 @@
 package com.example.splendormobilegame.activities.GameActivity;
 
 import android.util.Log;
+import java.util.Scanner;
 
 import com.example.splendormobilegame.Controller;
 import com.example.splendormobilegame.CustomAppCompatActivity;
+import com.example.splendormobilegame.model.User;
 import com.example.splendormobilegame.websocket.ReactionUtils;
 import com.example.splendormobilegame.websocket.UserReaction;
 import com.github.splendor_mobile_game.websocket.communication.ServerMessage;
@@ -25,7 +27,19 @@ public class TurnController<T extends GameActivity> extends Controller {
     }
 
     public void endTurn() {
-        // Maybe you want to check some things before sending request
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Are you sure you want to end your turn? (y/n)");
+        String input = scanner.nextLine();
+        if (input.equalsIgnoreCase("y")) {
+            // End the turn
+            currentPlayer = getNextPlayer();
+            sendRequestToEndTurn(currentPlayer);
+        }
+        
+        else {
+            System.out.println("Turn not ended.");
+        }
+
         this.sendRequestToEndTurn();
     }
 
@@ -35,13 +49,16 @@ public class TurnController<T extends GameActivity> extends Controller {
     }
 
     private void sendRequestToEndTurn() {
-        // TODO Compose up the messsage
-        // TODO Send the request
+        // Construct the message to send to the server
+        UserMessage message = new UserMessage("endTurn", null);
+
+        // Send the message to the server using the WebSocket
+        ReactionUtils.sendMessage(message, newTurnAnnouncementMessageHandler, activity);
     }
 
     private void sendRequestToPassTurn() {
-        // TODO Compose up the messsage
-        // TODO Send the request
+        // TODO Compose up the messsage 
+        // TODO Send the request 
     }
 
     public NewTurnAnnouncementMessageHandler getNewTurnAnnouncementMessageHandler() {
